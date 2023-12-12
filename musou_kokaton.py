@@ -3,6 +3,7 @@ import os
 import random
 import sys
 import time
+from typing import Any
 import pygame as pg
 
 
@@ -244,6 +245,21 @@ class Score:
         screen.blit(self.image, self.rect)
 
 
+class EMP:
+    """
+    電磁パルスに関するクラス
+    """
+    def __init__(self, emys, bombs, t: int):
+        self.image = pg.Surface((WIDTH,HEIGHT))
+        pg.draw.rect(self.image, (255,255,0), (WIDTH,HEIGHT))
+        self.t = t
+        
+    def update(self):
+        self.t 
+        if :
+            self.kill()
+
+
 def main():
     pg.display.set_caption("真！こうかとん無双")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -255,6 +271,7 @@ def main():
     beams = pg.sprite.Group()
     exps = pg.sprite.Group()
     emys = pg.sprite.Group()
+    emp = pg.sprite.Group()
 
     tmr = 0
     clock = pg.time.Clock()
@@ -265,6 +282,8 @@ def main():
                 return 0
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 beams.add(Beam(bird))
+            if event.type == pg.KEYDOWN and event.key == pg.K_e and score.value>20:
+                emp.add(EMP)
         screen.blit(bg_img, [0, 0])
 
         if tmr%200 == 0:  # 200フレームに1回，敵機を出現させる
@@ -283,6 +302,9 @@ def main():
         for bomb in pg.sprite.groupcollide(bombs, beams, True, True).keys():
             exps.add(Explosion(bomb, 50))  # 爆発エフェクト
             score.value += 1  # 1点アップ
+        
+        for :
+            score.value -= 20
 
         if len(pg.sprite.spritecollide(bird, bombs, True)) != 0:
             bird.change_img(8, screen) # こうかとん悲しみエフェクト
@@ -301,6 +323,8 @@ def main():
         exps.update()
         exps.draw(screen)
         score.update(screen)
+        emp.draw(screen)
+        emp.update()
         pg.display.update()
         tmr += 1
         clock.tick(50)
