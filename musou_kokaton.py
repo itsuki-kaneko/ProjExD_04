@@ -101,6 +101,7 @@ class Bird(pg.sprite.Sprite):
         self.state = state
         self.hyper_life = hyper_life
 
+
     def update(self, key_lst: list[bool], screen: pg.Surface):
         """
         押下キーに応じてこうかとんを移動させる
@@ -488,6 +489,10 @@ def main():
     while True:
         key_lst = pg.key.get_pressed()            
         for event in pg.event.get():
+            if event.type == pg.KEYDOWN and event.key == pg.K_LSHIFT:
+                bird.speed = 20
+            if event.type == pg.KEYUP and event.key == pg.K_LSHIFT:
+                bird.speed -= 10
             if event.type == pg.QUIT:
                 return 
             if event.type == pg.KEYDOWN and event.key == pg.K_CAPSLOCK and len(shields) == 0 and score.score >= 50:
@@ -561,7 +566,13 @@ def main():
             exps.add(Explosion(bomb, 50))  # 爆発エフェクト
             score.score_up(1)  # 1点アップ
             
-
+        if len(pg.sprite.spritecollide(bird, bombs, True)) != 0:
+            bird.change_img(8, screen) # こうかとん悲しみエフェクト
+            score.update(screen) 
+            pg.display.update()
+            time.sleep(2)
+            return
+          
         for bomb in pg.sprite.groupcollide(bombs, beams, True, True).keys():#複数の衝突判定
             exps.add(Explosion(bomb, 50))  # 爆発エフェクト
             score.score_up(1)  # 1点アップ
@@ -613,6 +624,7 @@ def main():
                 #bird.change_img(6,screen)# こうかとん喜びエフェクト
                 score.update(screen)
                 pg.display.update()
+
 
         bird.update(key_lst, screen)
         beams.update()
