@@ -143,14 +143,15 @@ class Beam(pg.sprite.Sprite):
     """
     ビームに関するクラス
     """
-    def __init__(self, bird: Bird):
+    def __init__(self, bird: Bird, angle0=0):
         """
         ビーム画像Surfaceを生成する
         引数 bird：ビームを放つこうかとん
+        引数 angle0:neobeam時の角度
         """
         super().__init__()
         self.vx, self.vy = bird.dire
-        angle = math.degrees(math.atan2(-self.vy, self.vx))
+        angle = math.degrees(math.atan2(-self.vy, self.vx)) + angle0
         self.image = pg.transform.rotozoom(pg.image.load(f"{MAIN_DIR}/fig/beam.png"), angle, 2.0)
         self.vx = math.cos(math.radians(angle))
         self.vy = -math.sin(math.radians(angle))
@@ -168,6 +169,30 @@ class Beam(pg.sprite.Sprite):
         if check_bound(self.rect) != (True, True):
             self.kill()
 
+
+class NeoBeam:
+    """
+    複数ビームに関するクラス
+    """
+    def __init__(self, bird, num):
+        """
+        引数1:こうかとん
+        引数2:ビーム数
+        """
+        self.bird = bird
+        self.num = num
+        
+    def gen_beams(self):
+        """
+        ビームを生成する
+        戻り値:ビームのリスト
+        """
+        lst = []
+        for i in range(-50, +51, 100//(self.num-1)):
+            beam = Beam(self.bird, i)
+            lst.append(beam)
+        return lst
+    
 
 class Explosion(pg.sprite.Sprite):
     """
@@ -262,9 +287,13 @@ def main():
         key_lst = pg.key.get_pressed()
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                return 0
+                return 0   
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 beams.add(Beam(bird))
+                if key_lst[pg.K_LSHIFT]:  # 左シフトが押されているなら
+                    neobeam = NeoBeam(bird, 5).gen_beams()  # Beamのリストを入れて、forを回してadd
+                    for b in neobeam:
+                        beams.add(b)
         screen.blit(bg_img, [0, 0])
 
         if tmr%200 == 0:  # 200フレームに1回，敵機を出現させる
