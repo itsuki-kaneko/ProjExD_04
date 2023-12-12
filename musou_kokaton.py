@@ -2,13 +2,14 @@ import math
 import random
 import sys
 import time
-
+import os
 import pygame as pg
 from pygame.sprite import AbstractGroup
 
 
 WIDTH = 1600  # ゲームウィンドウの幅
 HEIGHT = 900  # ゲームウィンドウの高さ
+MAIN_DIR = os.path.split(os.path.abspath(__file__))[0]
 
 
 def check_bound(obj: pg.Rect) -> tuple[bool, bool]:
@@ -148,7 +149,7 @@ class Bird(pg.sprite.Sprite):
             if self.hyper_life < 0:
                 self.change_state("normal", -1)
 
-        screen.blit(self.image, self.rect)
+        # screen.blit(self.image, self.rect)
 
     def get_direction(self) -> tuple[int, int]:
         return self.dire
@@ -233,13 +234,6 @@ class NeoBeam():
         self.beams =list()
         
     def gen_beams(self):
-        for angle in range(-50, 51, int(100/(self.num-1))):
-            self.beams.append(Beam(self.bird, angle))
-        return self.beams
-            
-            
-        
-        
         lst = []
         for i in range(self.num):
             Beam()
@@ -362,7 +356,7 @@ class Score:
     def __init__(self):
         self.font = pg.font.Font(None, 50)
         self.color = (0, 0, 255)
-        self.score = 0
+        self.score = 10000
         self.image = self.font.render(f"Score: {self.score}", 0, self.color)
         self.rect = self.image.get_rect()
         self.rect.center = 100, HEIGHT-50
@@ -396,31 +390,31 @@ class Shield(pg.sprite.Sprite):
             self.kill()
             
 
-class Gravity(pg.sprite.Sprite):
-    """
-    重力球に関するクラス
-    """
-    def __init__(self, bird: Bird, size: int, life: int):
-        """
-        重力球の円Surfaceと対応するRectを生成する
-        引数1 bird：こうかとん
-        引数2 size：重力球の半径
-        引数3 life：発動時間
-        """
-        super().__init__()
-        # self.size = size
-        self.image = pg.Surface((2*size, 2*size))
-        self.image.set_alpha(200)
-        self.image.set_colorkey((0, 0, 0))
-        pg.draw.circle(self.image, (10, 10, 10), (size, size), size)
-        self.rect = self.image.get_rect(center=bird.rect.center)
-        # self.rect.center = bird.rect.centerSs
-        self.life = life
+# class Gravity(pg.sprite.Sprite):
+#     """
+#     重力球に関するクラス
+#     """
+#     def __init__(self, bird: Bird, size: int, life: int):
+#         """
+#         重力球の円Surfaceと対応するRectを生成する
+#         引数1 bird：こうかとん
+#         引数2 size：重力球の半径
+#         引数3 life：発動時間
+#         """
+#         super().__init__()
+#         # self.size = size
+#         self.image = pg.Surface((2*size, 2*size))
+#         self.image.set_alpha(200)
+#         self.image.set_colorkey((0, 0, 0))
+#         pg.draw.circle(self.image, (10, 10, 10), (size, size), size)
+#         self.rect = self.image.get_rect(center=bird.rect.center)
+#         # self.rect.center = bird.rect.centerSs
+#         self.life = life
 
-    def update(self):
-        """
-        発動時間を1減算し，0未満になったらkill
-        """
+#     def update(self):
+#         """
+#         発動時間を1減算し，0未満になったらkill
+#         """
 
 class NeoGravity(pg.sprite.Sprite):
     """
@@ -566,12 +560,12 @@ def main():
             exps.add(Explosion(bomb, 50))  # 爆発エフェクト
             score.score_up(1)  # 1点アップ
             
-        if len(pg.sprite.spritecollide(bird, bombs, True)) != 0:
-            bird.change_img(8, screen) # こうかとん悲しみエフェクト
-            score.update(screen) 
-            pg.display.update()
-            time.sleep(2)
-            return
+        # if len(pg.sprite.spritecollide(bird, bombs, True)) != 0:
+        #     bird.change_img(8, screen) # こうかとん悲しみエフェクト
+        #     score.update(screen) 
+        #     pg.display.update()
+        #     time.sleep(2)
+        #     return
           
         for bomb in pg.sprite.groupcollide(bombs, beams, True, True).keys():#複数の衝突判定
             exps.add(Explosion(bomb, 50))  # 爆発エフェクト
