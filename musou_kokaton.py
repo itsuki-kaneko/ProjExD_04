@@ -290,8 +290,8 @@ def main():
                 return 0   
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 beams.add(Beam(bird))
-                if key_lst[pg.K_LSHIFT]:
-                    neobeam = NeoBeam(bird, 5).gen_beams()
+                if key_lst[pg.K_LSHIFT]:  # 左シフトが押されているなら
+                    neobeam = NeoBeam(bird, 5).gen_beams()  # Beamのリストを入れて、forを回してadd
                     for b in neobeam:
                         beams.add(b)
         screen.blit(bg_img, [0, 0])
