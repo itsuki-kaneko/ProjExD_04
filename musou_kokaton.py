@@ -4,6 +4,7 @@ import random
 import sys
 import time
 import pygame as pg
+import keyboard
 
 
 WIDTH = 1600  # ゲームウィンドウの幅
@@ -81,6 +82,7 @@ class Bird(pg.sprite.Sprite):
         """
         self.image = pg.transform.rotozoom(pg.image.load(f"{MAIN_DIR}/fig/{num}.png"), 0, 2.0)
         screen.blit(self.image, self.rect)
+
 
     def update(self, key_lst: list[bool], screen: pg.Surface):
         """
@@ -261,6 +263,10 @@ def main():
     while True:
         key_lst = pg.key.get_pressed()
         for event in pg.event.get():
+            if event.type == pg.KEYDOWN and event.key == pg.K_LSHIFT:
+                bird.speed = 20
+            if event.type == pg.KEYUP and event.key == pg.K_LSHIFT:
+                bird.speed -= 10
             if event.type == pg.QUIT:
                 return 0
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
@@ -286,7 +292,7 @@ def main():
 
         if len(pg.sprite.spritecollide(bird, bombs, True)) != 0:
             bird.change_img(8, screen) # こうかとん悲しみエフェクト
-            score.update(screen)
+            score.update(screen) 
             pg.display.update()
             time.sleep(2)
             return
